@@ -24,3 +24,5 @@ Versions from previous years can be found in tags.
 ---
 ## Notes
 - [x] Have fun!
+
+General notes
