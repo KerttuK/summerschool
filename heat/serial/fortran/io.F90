@@ -45,13 +45,12 @@ contains
     implicit none
 
     type(field), intent(out) :: field0
-    character(len=85), intent(in) :: filename
+    character(len=85), intent(in) :: filename 
 
     integer :: nx, ny, i
     integer, parameter :: funit=10
     character(len=2) :: dummy
-    real, dimension(:,:), allocatable :: A
-
+    
     ! TODO: implement the file reading
     ! Read the header
 
@@ -67,7 +66,7 @@ contains
     ! also a halo region (one layer of extra space in all directions which
     ! is used as boundary condition).
 
-    allocate (A(nx+2,ny+2))
+   allocate(field0%data(0:field0%nx+1, 0:field0%ny+1))
 
     ! Read the data
     
