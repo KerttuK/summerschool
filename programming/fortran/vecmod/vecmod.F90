@@ -8,7 +8,26 @@ module vector_algebra
 
   ! TODO: overload operators needed by the parser
 
-  ! ...
+  interface operator(+)
+     module procedure vector_sum
+  end interface operator(+)
+
+  interface operator(-)
+     module procedure vector_sub
+  end interface operator(-)
+
+  interface operator(.)
+     module procedure vector_dotproduct
+  end interface operator(.)
+
+  interface operator(x)
+     module procedure vector_crosspsorduct
+  end interface operator(x)
+
+  interface oberator(abs)
+     module procedure vector_norm
+  end interface oberator
+
 
 contains
   implicit none
@@ -47,6 +66,12 @@ contains
    
   end function vector_crossproduct
 
-  ! ...
+  function vector_norm(v) result(l)
+    type(vector_t) :: v
+    real(REAL64) :: l
+
+    l=sqrt(v%x**2 + v%y**2 + v%z**2)
+  end function vector_norm
+
 
 end module vector_algebra
