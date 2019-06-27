@@ -53,6 +53,9 @@ contains
     ! TODO: implement the file reading
     ! Read the header
 
+    open(funit, file=filename, status='old', iostat=stat)
+    read(funit, *) dummy, nx, ny
+
     ! Initialize the field metadata (nx, ny, dx, dy). You can use
     ! the utilite routine set_field_dimensions from module heat
 
