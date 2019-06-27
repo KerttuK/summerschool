@@ -16,21 +16,20 @@ module vector_algebra
      module procedure vector_sub
   end interface operator(-)
 
-  interface operator(.)
+  interface operator(*)
      module procedure vector_dotproduct
-  end interface operator(.)
+  end interface operator(*)
 
-  interface operator(x)
-     module procedure vector_crosspsorduct
-  end interface operator(x)
+  interface operator(.x.)
+     module procedure vector_crossproduct
+  end interface operator(.x.)
 
-  interface oberator(abs)
+  interface abs
      module procedure vector_norm
-  end interface oberator
+  end interface
 
 
 contains
-  implicit none
   ! TODO: implement the corresponding functions
 
   function vector_sum(v1, v2) result(v3)
@@ -51,7 +50,7 @@ contains
 
   function vector_dotproduct(v1, v2) result(v3)
     type(vector_t), intent(in) :: v1, v2
-    type(vector_t) :: v3
+    real(REAL64) :: v3
     v3 = v1%x * v2%x + v1%y * v2%y + v1%z * v2%z
    
   end function vector_dotproduct
