@@ -48,24 +48,32 @@ contains
     character(len=85), intent(in) :: filename
 
     integer :: nx, ny, i
+    integer, parameter :: funit=10
     character(len=2) :: dummy
+    real, dimension(:,:), allocatable :: A
 
     ! TODO: implement the file reading
     ! Read the header
 
-    open(funit, file=filename, status='old', iostat=stat)
+    open(funit, file=filename, status='old')
     read(funit, *) dummy, nx, ny
 
     ! Initialize the field metadata (nx, ny, dx, dy). You can use
     ! the utilite routine set_field_dimensions from module heat
 
+    call set_field_dimensions(field0, nx, ny)
+
     ! Allocate space for the data. The array for temperature field contains 
     ! also a halo region (one layer of extra space in all directions which
     ! is used as boundary condition).
 
-
+    allocate (A(nx+2,ny+2))
 
     ! Read the data
+    
+    do i = 1, nx
+       read(funit, *) field0%data(i, 1:ny)
+    end do
 
 
     ! TODO end
