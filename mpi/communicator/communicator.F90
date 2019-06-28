@@ -3,19 +3,29 @@ program communicator
   implicit none
 
   integer, parameter :: n_mpi_tasks = 4
-  integer :: ierr, ntasks, rank
+  integer :: ierr, ntasks, rank, color, newcomm
   integer, dimension(2*n_mpi_tasks) :: sendbuf, recvbuf
   integer, dimension(2*n_mpi_tasks**2) :: printbuf
+  !type(mpi_comm) :: newcomm
 
   call mpi_init(ierr)
   call mpi_comm_size(mpi_comm_world, ntasks, ierr)
   call mpi_comm_rank(mpi_comm_world, rank, ierr)
-
   
-
   call init_buffers
 
-  call print_buffers(sendbuf)
+  if (rank < 2) then
+     color = 1
+  else
+     color = 2
+  end if
+
+  call mpi_comm_split(mpi_comm_world, color, rank, newcomm, ierr)
+
+  call mpi_reduce(sendbuf, recvbuf, 2*n_mpi_tasks, mpi_integer, mpi_sum, 0, newcomm, ierr)
+  
+
+  call print_buffers(recvbuf)
 
   call mpi_finalize(ierr)
 
