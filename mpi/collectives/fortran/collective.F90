@@ -41,10 +41,15 @@ program coll_exer
   
   !Gathering
 
-  recvcounts(0:3) = [1,1,2,4]
-  displs(0:3) = [0,1,2,4]
+  !recvcounts(0:3) = [1,1,2,4]
+  !displs(0:3) = [0,1,2,4]
   
-  call mpi_gatherv(sendbuf, recvcounts(rank), mpi_integer, recvbuf, recvcounts, displs, mpi_integer, 1, mpi_comm_world, ierr)
+  !call mpi_gatherv(sendbuf, recvcounts(rank), mpi_integer, recvbuf, recvcounts, displs, mpi_integer, 1, mpi_comm_world, ierr)
+  !call print_buffers(recvbuf)
+
+  !recvcounts(0:3) = 
+  call mpi_alltoall(sendbuf, 2, mpi_integer, recvbuf, 2, mpi_integer, mpi_comm_world, ierr)
+
   call print_buffers(recvbuf)
 
   call mpi_finalize(ierr)
