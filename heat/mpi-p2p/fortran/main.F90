@@ -6,7 +6,7 @@ program heat_solve
   use io
   use setup
   use utilities
-  use mpi_f08
+  use mpi
 
   implicit none
 
@@ -25,6 +25,8 @@ program heat_solve
   real(kind=dp) :: start, stop ! Timers
 
   ! TODO start: initialize MPI
+
+  call mpi_init(ierr)
 
   ! TODO end
 
@@ -61,6 +63,8 @@ program heat_solve
   call finalize(current, previous)
 
   ! TODO start: finalize MPI
+
+  call mpi_finalize(ierr)
 
   ! TODO end
 
