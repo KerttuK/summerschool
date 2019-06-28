@@ -1,14 +1,16 @@
 program hello
-  use mpi_f08
+  use mpi
   implicit none
 
 
-  call mpi_init
+  integer :: rc
+  
+  call mpi_init(rc)
 
   write(*,*) 'Hello world!'
 
 
-  call mpi_finalize
+  call mpi_finalize(rc)
 
 
 
