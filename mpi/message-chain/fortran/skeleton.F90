@@ -22,18 +22,32 @@ program basic
   t0 = mpi_wtime()
 
   ! TODO: Send and receive as defined in the assignment
-  if (myid < ntasks-1) then
+  if ((myid > 0) .and.( myid <  ntasks-1)) then
+     call mpi_sendrecv(message, msgsize, mpi_integer, myid+1, myid+1, &
+                       receiveBuffer, msgsize,mpi_integer, myid-1, myid, mpi_comm_world, status, rc)
+     write(*,'(A10,I3,A20,I8,A,I3,A,I3)') 'Sender: ', myid, &
+          ' Sent elements: ', msgsize, &
+          '. Tag: ', myid+1, '. Receiver: ', myid+1
+     write(*,'(A10,I3,A,I3)') 'Receiver: ', myid+1, &
+          ' First element: ', receiveBuffer(1)
+
+  else if ( myid== 0 ) then
      call mpi_send(message, msgsize, mpi_integer, myid+1, myid+1, mpi_comm_world, rc)
      write(*,'(A10,I3,A20,I8,A,I3,A,I3)') 'Sender: ', myid, &
           ' Sent elements: ', msgsize, &
           '. Tag: ', myid+1, '. Receiver: ', myid+1
-  end if
 
-  if (myid > 0) then
+  else if ( myid == ntasks-1 ) then
      call mpi_recv(receiveBuffer, msgsize, mpi_integer, myid-1, myid, mpi_comm_world, status, rc)
-     write(*,'(A10,I3,A,I3)') 'Receiver: ', myid, &
+     write(*,'(A10,I3,A,I3)') 'Receiver: ', myid+1, &
           ' First element: ', receiveBuffer(1)
   end if
+
+  !if (myid > 0) then
+  !   call mpi_recv(receiveBuffer, msgsize, mpi_integer, myid-1, myid, mpi_comm_world, status, rc)
+  !   write(*,'(A10,I3,A,I3)') 'Receiver: ', myid, &
+  !        ' First element: ', receiveBuffer(1)
+  !end if
 
   ! Finalize measuring the time and print it out
   t1 = mpi_wtime()
