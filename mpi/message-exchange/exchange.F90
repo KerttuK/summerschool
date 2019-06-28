@@ -1,7 +1,7 @@
 program exchange
-  use mpi_f08
+  use mpi
   implicit none
-  integer, parameter :: msgsize = 100
+  integer, parameter :: msgsize = 100000
   integer :: rc, myid, ntasks
   type(mpi_status) :: status
   integer :: message(msgsize)
@@ -15,12 +15,22 @@ program exchange
 
   ! TODO: Implement sending and receiving as defined in the assignment
   if (myid == 0) then
+     call mpi_send(message, msgsize, mpi_integer, myid+1, 1, mpi_comm_world, rc)
+     call mpi_recv(receiveBuffer, msgsize, mpi_integer, myid+1, 2, mpi_comm_world, status, rc)
+  else if (myid == 1) then
+     call mpi_recv(receiveBuffer, msgsize, mpi_integer, myid-1, 1, mpi_comm_world, status, rc)
+     call mpi_send(message, msgsize, mpi_integer, myid-1, 2, mpi_comm_world, rc)
+     
+  end if
+
+  if (myid == 0) then
      write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
           ' received ', receiveBuffer(1)
   else if (myid == 1) then
      write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
           ' received ', receiveBuffer(1)
   end if
+
 
   call mpi_finalize(rc)
 
