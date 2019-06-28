@@ -6,20 +6,24 @@ contains
 
   ! Exchange the boundary data between MPI tasks
   subroutine exchange(field0, parallel)
-    use mpi_f08
+    use mpi
 
     implicit none
 
     type(field), intent(inout) :: field0
     type(parallel_data), intent(in) :: parallel
-
+    type(mpi_status) :: status
     integer :: ierr
 
     ! TODO start: implement halo exchange
     ! Send to left, receive from right
 
-    ! Send to right, receive from left
+    call mpi_sendrecv(field0%data(:,1), field0%nx, mpi_real, parallel%nleft, 1,  &
+         field0%data(:,field0%ny), field0%nx, mpi_real, parallel%nright, 1, mpi_comm_world, status, ierr)
 
+    ! Send to right, receive from left
+    call mpi_sendrecv(field0%data(:,field0%ny), field0%nx, mpi_real, parallel%nright, 1,  &
+         field0%data(:,1), field0%nx, mpi_real, parallel%nleft, 1, mpi_comm_world, status, ierr)
     ! TODO end
 
   end subroutine exchange
