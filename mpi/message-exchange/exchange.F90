@@ -17,19 +17,23 @@ program exchange
   if (myid == 0) then
      call mpi_send(message, msgsize, mpi_integer, myid+1, 1, mpi_comm_world, rc)
      call mpi_recv(receiveBuffer, msgsize, mpi_integer, myid+1, 2, mpi_comm_world, status, rc)
+     write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
+          ' received ', receiveBuffer(1)
   else if (myid == 1) then
      call mpi_recv(receiveBuffer, msgsize, mpi_integer, myid-1, 1, mpi_comm_world, status, rc)
      call mpi_send(message, msgsize, mpi_integer, myid-1, 2, mpi_comm_world, rc)
+     write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
+          ' received ', receiveBuffer(1)
      
   end if
 
-  if (myid == 0) then
-     write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
-          ' received ', receiveBuffer(1)
-  else if (myid == 1) then
-     write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
-          ' received ', receiveBuffer(1)
-  end if
+  !if (myid == 0) then
+   !  write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
+    !      ' received ', receiveBuffer(1)
+  !else if (myid == 1) then
+  !   write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
+  !        ' received ', receiveBuffer(1)
+  !end if
 
 
   call mpi_finalize(rc)
