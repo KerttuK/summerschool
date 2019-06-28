@@ -1,5 +1,5 @@
 program basic
-  use mpi_f08
+  use mpi
   use iso_fortran_env, only : REAL64
 
   implicit none
@@ -23,14 +23,14 @@ program basic
 
   ! TODO: Send and receive as defined in the assignment
   if (myid < ntasks-1) then
-
+     call mpi_send(message, msgsize, mpi_integer, myid+1, myid+1, mpi_comm_world, rc)
      write(*,'(A10,I3,A20,I8,A,I3,A,I3)') 'Sender: ', myid, &
           ' Sent elements: ', msgsize, &
           '. Tag: ', myid+1, '. Receiver: ', myid+1
   end if
 
   if (myid > 0) then
-
+     call mpi_recv(receiveBuffer, msgsize, mpi_integer, myid-1, myid, mpi_comm_world, status, rc)
      write(*,'(A10,I3,A,I3)') 'Receiver: ', myid, &
           ' First element: ', receiveBuffer(1)
   end if
