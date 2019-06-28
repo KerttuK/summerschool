@@ -47,9 +47,8 @@ program coll_exer
   !call mpi_gatherv(sendbuf, recvcounts(rank), mpi_integer, recvbuf, recvcounts, displs, mpi_integer, 1, mpi_comm_world, ierr)
   !call print_buffers(recvbuf)
 
-  !recvcounts(0:3) = 
+  !Alltoall
   call mpi_alltoall(sendbuf, 2, mpi_integer, recvbuf, 2, mpi_integer, mpi_comm_world, ierr)
-
   call print_buffers(recvbuf)
 
   call mpi_finalize(ierr)
