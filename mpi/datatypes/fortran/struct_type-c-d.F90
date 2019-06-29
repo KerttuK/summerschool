@@ -1,5 +1,5 @@
 program datatype_struct
-  use mpi_f08
+  use mpi
   use iso_fortran_env, only : real64
   implicit none
 
@@ -14,7 +14,7 @@ program datatype_struct
   type(particle) :: particles(n)
 
   integer, parameter :: cnt = 3
-  type(mpi_datatype) :: particle_mpi_type, temp_type, types(cnt)
+  integer  :: particle_mpi_type, temp_type, types(cnt)
   integer :: blocklen(cnt)
   integer(KIND=MPI_ADDRESS_KIND) :: disp(cnt)
   integer(KIND=MPI_ADDRESS_KIND) :: lb, extent
@@ -35,9 +35,24 @@ program datatype_struct
 
   ! TODO: define the datatype for type particle
 
+  types = [mpi_real, mpi_integer, mpi_character]
+  blocklen = [3,2,1]
+
+  call mpi_get_address(particles(1)%coords, disp(1), ierror)
+  call mpi_get_address(particles(1)%charge, disp(2), ierror)
+  call mpi_get_address(particles(1)%label, disp(3), ierror)
+  !make displacements relative
+  do i = cnt, 1, -1
+     disp(i) = MPI_AINT_DIFF(disp(i), disp(1))
+  end do
+  
+  call mpi_type_create_struct(cnt, blocklen, disp, types, particle_mpi_type, ierror)
+  call mpi_type_commit(particle_mpi_type, ierror)
+
   ! TODO: Check extent.
   ! (Not really neccessary on most systems.)
   ! TODO: resize the particle_mpi_type if needed
+  ! difference between particles
   if(extent /= disp(2) - disp(1)) then
      ! TODO: resize the particle_mpi_type if needed
   end if
