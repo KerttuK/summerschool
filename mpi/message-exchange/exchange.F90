@@ -27,15 +27,6 @@ program exchange
      
   end if
 
-  !if (myid == 0) then
-   !  write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
-    !      ' received ', receiveBuffer(1)
-  !else if (myid == 1) then
-  !   write(*,'(A10,I3,A10,I3)') 'Rank: ', myid, &
-  !        ' received ', receiveBuffer(1)
-  !end if
-
-
   call mpi_finalize(rc)
 
-end program exchange
+end program exchange 
