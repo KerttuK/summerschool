@@ -1,7 +1,7 @@
 ! I/O routines for heat equation solver
 module io
   use heat
-  use mpi_f08
+  use mpi
 
 contains
 

@@ -1,6 +1,6 @@
 ! Field metadata for heat equation solver
 module heat
-  use mpi_f08
+  use mpi
   use iso_fortran_env, only : REAL64
   implicit none
 
@@ -22,6 +22,7 @@ module heat
      integer :: rank
      integer :: nleft, nright  ! Ranks of neighbouring MPI tasks
      type(mpi_request) :: requests(4)  ! Non-blocking communication handles
+     integer :: status(mpi_status_size, 4)
   end type parallel_data
 
 contains
@@ -51,7 +52,7 @@ contains
   end subroutine set_field_dimensions
 
   subroutine parallel_setup(parallel, nx, ny)
-    use mpi_f08
+    use mpi
 
     implicit none
 

@@ -7,7 +7,7 @@ contains
   ! Exchange the boundary data between MPI tasks
   ! part 1: start communication
   subroutine exchange_init(field0, parallel)
-    use mpi_f08
+    use mpi
 
     implicit none
 
@@ -15,6 +15,25 @@ contains
     type(parallel_data), intent(inout) :: parallel
     integer :: ierr
     ! TODO
+
+! Send to left, receive from right
+
+    call mpi_isend(field0%data(:,1), field0%nx+2, mpi_double_precision, &
+         parallel%nleft, 1, mpi_comm_world, parallel%requests(1), ierr)
+
+    call mpi_irecv(field0%data(:,field0%ny+1), field0%nx+2, mpi_double_precision, &
+         parallel%nright, 1,  mpi_comm_world, parallel%requests(2), ierr)
+
+    ! Send to right, receive from left
+    call mpi_isend(field0%data(:,field0%ny), field0%nx+2, mpi_double_precision, &
+         parallel%nright, 2, mpi_comm_world, parallel%requests(3), ierr)
+
+    call mpi_irecv(field0%data(:,0), field0%nx+2, mpi_double_precision, &
+         parallel%nleft, 2,  mpi_comm_world, parallel%requests(4), ierr)
+
+    
+
+    
   end subroutine exchange_init
 
   ! Compute one time step of temperature evolution
@@ -34,16 +53,32 @@ contains
     ny = curr%ny
 
     ! TODO
+
+    do j = 2, ny-1
+       do i = 1, nx
+          curr%data(i, j) = prev%data(i, j) + a * dt * &
+               & ((prev%data(i-1, j) - 2.0 * prev%data(i, j) + &
+               &   prev%data(i+1, j)) / curr%dx**2 + &
+               &  (prev%data(i, j-1) - 2.0 * prev%data(i, j) + &
+               &   prev%data(i, j+1)) / curr%dy**2)
+       end do
+    end do
+
+
+    
   end subroutine evolve_interior
 
   ! Finalize the non-blocking communication
   subroutine exchange_finalize(parallel)
-    use mpi_f08
+    use mpi
     implicit none
     type(parallel_data), intent(inout) :: parallel
     integer :: ierr
 
     ! TODO
+
+    call mpi_waitall(4, parallel%requests, parallel%status, ierr)
+    
   end subroutine exchange_finalize
 
   ! Compute one time step of temperature evolution
@@ -66,6 +101,24 @@ contains
 
     ! TODO
 
+    j = 1
+    do i = 1, nx
+       curr%data(i, j) = prev%data(i, j) + a * dt * &
+            & ((prev%data(i-1, j) - 2.0 * prev%data(i, j) + &
+            &   prev%data(i+1, j)) / curr%dx**2 + &
+            &  (prev%data(i, j-1) - 2.0 * prev%data(i, j) + &
+            &   prev%data(i, j+1)) / curr%dy**2)
+    end do
+    j = ny
+    do i = 1, nx
+       curr%data(i, j) = prev%data(i, j) + a * dt * &
+            & ((prev%data(i-1, j) - 2.0 * prev%data(i, j) + &
+            &   prev%data(i+1, j)) / curr%dx**2 + &
+            &  (prev%data(i, j-1) - 2.0 * prev%data(i, j) + &
+            &   prev%data(i, j+1)) / curr%dy**2)
+    end do
+
+    
   end subroutine evolve_edges
 
 end module core
