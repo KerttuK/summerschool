@@ -1,12 +1,15 @@
 program pario
-  use mpi_f08
+  use mpi
   use, intrinsic :: iso_fortran_env, only : error_unit, output_unit
   implicit none
 
-  integer, parameter :: datasize = 64, writer_id = 0
+  integer, parameter :: datasize = 64, writer_id = 0, funit=10
   integer :: rc, my_id, ntasks, localsize, i
   integer, dimension(:), allocatable :: localvector
   integer, dimension(datasize) :: fullvector
+  character(len=8) :: fname='data.dat'
+  integer :: status(mpi_status_size, datasize)
+  character(len=10) :: fmt = 'formatted'
 
   call mpi_init(rc)
   call mpi_comm_size(mpi_comm_world, ntasks, rc)
@@ -42,6 +45,18 @@ contains
     ! TODO: Implement a function that will read the data from a file so that
     !       a single process does the file io. Use rank WRITER_ID as the io rank
 
+    
+    if (my_id == writer_id) then
+       open(funit, file=fname, access='stream', form='unformatted')
+       read(funit, pos=1) fullvector
+       close(funit)
+       write(output_unit,'(A,I0,A)') 'Read ', size(fullvector), &
+            ' elements from file data.dat'
+     end if
+
+     call mpi_scatter(fullvector, localsize, mpi_integer, &
+            localvector, localsize, mpi_integer, writer_id, mpi_comm_world, rc)
+        
   end subroutine single_reader
 
   subroutine ordered_print
