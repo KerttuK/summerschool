@@ -29,30 +29,28 @@ program pario
 
   localvector = [(i + my_id * localsize, i=1,localsize)]
 
-  call single_writer()
+  call many_writer()
 
   deallocate(localvector)
   call mpi_finalize(rc)
 
 contains
 
-  subroutine single_writer()
+  subroutine many_writer()
     implicit none
+    character(len=30) :: filename
 
     ! TODO: Implement a function that writers the whole array of elements
     !       to a file so that single process is responsible for the file io
 
-    
-    call mpi_gather(localvector, localsize, mpi_integer, &
-         fullvector, localsize, mpi_integer, writer_id, mpi_comm_world, rc)
-    if (my_id == writer_id) then
-       open(funit, file=fname, access='stream', status='replace',form='unformatted')
-       write(funit, pos=1) fullvector
-       close(funit)
-       write(output_unit,'(A,I0,A)') 'Wrote ', size(fullvector), &
-            ' elements to file data.dat'
-    end if
+
+    write(filename, '(A,I0,A)') 'data-', my_id, '.dat'
+    open(my_id+funit, file=filename,  status='replace',form='unformatted', access='stream')
+    write(my_id+funit, pos=1) localvector
+    close(my_id+funit)
+    write(output_unit,'(A,I0,A)') 'Wrote ', size(localvector), &
+            ' elements to a file'
    
-  end subroutine single_writer
+  end subroutine many_writer
 
 end program pario
