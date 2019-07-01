@@ -1,5 +1,5 @@
 program pario
-  use mpi_f08
+  use mpi
   use, intrinsic :: iso_fortran_env, only : error_unit, output_unit
   implicit none
 
@@ -38,12 +38,21 @@ contains
     integer :: rc, dsize
     type(mpi_file) :: fh
     integer(kind=MPI_OFFSET_KIND) :: offset;
-
+    
     call mpi_type_size(MPI_INTEGER, dsize, rc)
 
     ! TODO: write the output file "mpiio.dat" using MPI IO. Each
     !       rank should write their own local vectors to correct
     !       locations in the output file.
+
+    offset = my_id * localsize * dsize
+
+    call mpi_file_open(mpi_comm_world, 'mpiio.dat',MPI_MODE_CREATE+MPI_MODE_WRONLY, &
+         mpi_info_null, fh, rc)
+    call mpi_file_write_at_all(fh, offset, localvector, localsize, &
+         mpi_integer, mpi_status_ignore, rc)
+
+    call mpi_file_close(fh, rc)
 
   end subroutine mpiio_writer
 
