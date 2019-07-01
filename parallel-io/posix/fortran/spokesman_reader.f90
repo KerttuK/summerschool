@@ -47,7 +47,7 @@ contains
 
     
     if (my_id == writer_id) then
-       open(funit, file=fname, access='stream', form='unformatted')
+       open(funit, file=fname, access='stream', status='old',form='unformatted')
        read(funit, pos=1) fullvector
        close(funit)
        write(output_unit,'(A,I0,A)') 'Read ', size(fullvector), &
