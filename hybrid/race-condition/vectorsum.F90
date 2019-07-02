@@ -16,10 +16,23 @@ program vectorsum
   sumex = nx*(nx+1_ik)/2_ik
   write(*,*) 'Arithmetic sum formula (exact):                  ', sumex
 
-  sum = 0
+ 
   ! TODO: Parallelize the computation
+   sum = 0
+  !$omp parallel do default(shared) private(i)
   do i = 1, nx
      sum = sum + vecA(i)
   end do
-  write(*,*) 'Sum: ', sum
+  !$omp end parallel do
+   write(*,*) 'Sum: ', sum
+  
+  sum = 0
+  !Compute sum using reduction
+  !$omp parallel do default(shared) private(i) reduction(+:sum)
+  do i = 1, nx
+     sum = sum + vecA(i)
+  end do
+  !$omp end parallel do
+   write(*,*) 'Sum: ', sum
+  
 end program vectorsum
