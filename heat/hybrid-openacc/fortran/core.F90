@@ -58,6 +58,8 @@ contains
     prevdata => prev%data
 
     ! TODO: use OpenACC to parallelise the loops
+    !$acc parallel loop private(i,j) copyin(prevdata(0:nx+1,0:ny+1)) &
+    !$acc          copyout(currdata(1:nx,1:ny)) collapse(2)
     do j = 1, ny
        do i = 1, nx
           currdata(i, j) = prevdata(i, j) + a * dt * &
@@ -67,6 +69,7 @@ contains
                &   prevdata(i, j+1)) / dy**2)
        end do
     end do
+    !$acc end parallel loop
   end subroutine evolve
 
 end module core
