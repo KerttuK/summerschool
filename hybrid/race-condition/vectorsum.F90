@@ -33,6 +33,22 @@ program vectorsum
      sum = sum + vecA(i)
   end do
   !$omp end parallel do
-   write(*,*) 'Sum: ', sum
+  write(*,*) 'Sum: ', sum
+
+  sum = 0
+  !Compute sum using reduction
+  !$omp parallel default(shared) private(i, psum)
+  psum = 0
+  !$omp do
+  do i = 1, nx
+     psum = psum + vecA(i)
+  end do
+  !$omp end do
+  !$omp critical
+  sum = sum + psum
+  !$omp end critical
+  !$omp end parallel
+  write(*,*) 'Sum: ', sum
+
   
 end program vectorsum
