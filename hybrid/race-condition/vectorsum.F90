@@ -24,7 +24,7 @@ program vectorsum
      sum = sum + vecA(i)
   end do
   !$omp end parallel do
-   write(*,*) 'Sum: ', sum
+   write(*,*) 'Sum with data race: ', sum
   
   sum = 0
   !Compute sum using reduction
@@ -33,7 +33,7 @@ program vectorsum
      sum = sum + vecA(i)
   end do
   !$omp end parallel do
-  write(*,*) 'Sum: ', sum
+  write(*,*) 'Sum using reduction: ', sum
 
   sum = 0
   !Compute sum using reduction
@@ -48,7 +48,7 @@ program vectorsum
   sum = sum + psum
   !$omp end critical
   !$omp end parallel
-  write(*,*) 'Sum: ', sum
+  write(*,*) 'Sum using critical section: ', sum
 
   
 end program vectorsum
