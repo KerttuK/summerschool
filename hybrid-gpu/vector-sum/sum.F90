@@ -21,6 +21,13 @@ program vectorsum
   ! Implement vector addition on device with OpenACC
   ! vecC = vecA + vecB
 
+  !$acc kernels
+  do i=1, nx
+     vecC(i) = vecA(i) + vecB(i)
+  end do
+  !$acc end kernels
+
+
   ! Compute the check value
   write(*,*) 'Reduction sum: ', sum(vecC)
 
