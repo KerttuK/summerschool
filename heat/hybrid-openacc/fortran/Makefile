@@ -1,5 +1,5 @@
 ifeq ($(COMP),)
-COMP=pgi
+COMP=gnu
 endif
 
 COMMONDIR=../../common
