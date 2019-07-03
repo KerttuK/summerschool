@@ -29,8 +29,7 @@ contains
          & parallel%nleft, 12, &
          & MPI_COMM_WORLD, MPI_STATUS_IGNORE, ierr)
 
-    ! Copy the updated boundary to the device
-    ! TODO: fix the subroutine
+    ! Copy the updated boundary to the device    
     call update_device_boundary(field0);
 
   end subroutine exchange
